@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         val login = findViewById<TextView>(R.id.emailInput)
         val password = findViewById<TextView>(R.id.passwordInput)
         button.setOnClickListener {
-            updateAccessToken(this, "https://p.mrsu.ru/OAuth/Token", "ГрязновДЮ", "bitbit777")
+            updateAccessToken(this, "https://p.mrsu.ru/OAuth/Token", "login", "password")
             getUserInfo(this)
         }
 
