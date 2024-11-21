@@ -21,7 +21,7 @@ class AuthActivity : AppCompatActivity() {
 
         val binding: ActivityAuthBinding = DataBindingUtil.setContentView(
             this, R.layout.activity_auth
-        );
+        )
 
         setContentView(binding.auth)
 
