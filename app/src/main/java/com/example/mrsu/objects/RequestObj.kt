@@ -41,7 +41,7 @@ object RequestObj {
             .post(formBody)
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .build()
-        val alive = Boolean
+
         client.newCall(request).enqueue(object : okhttp3.Callback {
 
             override fun onFailure(call: okhttp3.Call, e: IOException) {
