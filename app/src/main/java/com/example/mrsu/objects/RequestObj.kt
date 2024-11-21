@@ -14,13 +14,18 @@ import java.io.IOException
 object RequestObj {
 
     private val client = OkHttpClient()
+    private val gson = Gson()
 
-    val gson = Gson()
 
-    fun isTokenValid(): Boolean {
-        return false
+    //Есть ли токен вообще
+    fun isTokenValid(context: Context): Boolean{
+        val token = getAccessToken(context)
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        return !token.isNullOrEmpty()//Сюда вписать функцию для проверки ttl
+        //!!!!!!!!!!!!
     }
 
+    //Запросы к Бд
     fun getAccessTokenRequest(context: Context, urlString: String, username: String, password: String) {
 
         val formBody = FormBody.Builder()
@@ -36,20 +41,20 @@ object RequestObj {
             .post(formBody)
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .build()
-
+        val alive = Boolean
         client.newCall(request).enqueue(object : okhttp3.Callback {
 
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.w("Request failed", e.message.toString())
+                Log.w("Request token failed", e.message.toString())
+
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
 
                 if (response.isSuccessful) {
-                    val accessTokenMessage =
-                        gson.fromJson(response.body?.string(), AccessTokenMessage::class.java)
-                    saveAccessToken(context, accessTokenMessage)
+                    val accessTokenMessage = gson.fromJson(response.body?.string(), AccessTokenMessage::class.java)
                     Log.i("Successful auth request", accessTokenMessage.toString())
+                    saveAccessToken(context, accessTokenMessage)
                 }
                 else {
                     Log.i("Unsuccessful auth request", response.code.toString())
@@ -58,19 +63,8 @@ object RequestObj {
         })
     }
 
-    fun saveAccessToken(context: Context, accessTokenMessage: AccessTokenMessage) {
-        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        sharedPref.edit().putString("access_token", accessTokenMessage.accessToken).apply()
-    }
-
-    fun getToken(context: Context): String? {
-        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        return sharedPref.getString("access_token", null)
-    }
-
-    fun getUserInfo(context: Context) {
-
-        val bearerToken = getToken(context)
+    fun getUserInfoRequest(context: Context) {
+        val bearerToken = getAccessToken(context)
 
         val request = Request.Builder()
             .url("https://papi.mrsu.ru/v1/User")
@@ -81,19 +75,44 @@ object RequestObj {
 
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                println("Request failed: ${e.message}")
+                Log.w("Request user failed", e.message.toString())
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
                 if (response.isSuccessful) {
                     val user = gson.fromJson(response.body?.string(), User::class.java)
-                    println("Response: ${user.toString()}")
+                    Log.i("Successful user request", user.toString())
+                    saveUser(context, user)
                 } else {
-                    println("Error: ${response.code}")
+                    Log.i("Unsuccessful user request", response.code.toString())
                 }
             }
         })
     }
 
+    //SharedPreferences
+    private fun saveAccessToken(context: Context, accessTokenMessage: AccessTokenMessage) {
+        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPref.edit().putString("access_token", accessTokenMessage.accessToken).apply()
+        Log.i("SharedPreferences edited token", accessTokenMessage.accessToken)
+    }
+
+    private fun getAccessToken(context: Context): String? {
+        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        return sharedPref.getString("access_token", null)
+    }
+
+    private fun saveUser(context: Context, user: User){
+        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPref.edit().putString("user", gson.toJson(user)).apply()
+        Log.i("SharedPreferences edited user", gson.toJson(user))
+    }
+
+    public fun getUser(context: Context): User? {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val userJson = prefs.getString("user", null)
+
+        return userJson?.let { gson.fromJson(it, User::class.java) }
+    }
 
 }
