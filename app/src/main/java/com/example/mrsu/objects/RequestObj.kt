@@ -90,6 +90,36 @@ object RequestObj {
         })
     }
 
+    fun getStudentTimeTableRequest(context: Context){
+
+
+        val request = Request.Builder()
+            .url("https://papi.mrsu.ru/v1/StudentTimeTable?date=")
+            .post(FormBody.Builder().build())
+            .addHeader("Authorization", "Bearer "+ getAccessToken(context))
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                Log.w("Request TimeTable failed", e.message.toString())
+
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+
+                if (response.isSuccessful) {
+                    val accessTokenMessage = gson.fromJson(response.body?.string(), AccessTokenMessage::class.java)
+                    Log.i("Successful TimeTable request", accessTokenMessage.toString())
+                    saveAccessToken(context, accessTokenMessage)
+                }
+                else {
+                    Log.i("Unsuccessful TimeTable request", response.code.toString())
+                }
+            }
+        })
+    }
     //SharedPreferences
     private fun saveAccessToken(context: Context, accessTokenMessage: AccessTokenMessage) {
         val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
