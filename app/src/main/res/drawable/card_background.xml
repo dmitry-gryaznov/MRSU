@@ -1,0 +1,17 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Тень -->
+    <item>
+        <shape>
+            <solid android:color="#B3E6E6FA" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+
+    <!-- Фон карточки -->
+    <item android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="4dp">
+        <shape>
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</layer-list>

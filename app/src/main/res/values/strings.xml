@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MRSU</string>
+    <string name="user_photo">Фото пользователя</string>
 </resources>

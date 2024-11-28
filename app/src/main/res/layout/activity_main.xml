@@ -7,170 +7,149 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.MainActivity">
+        android:background="@drawable/gradient_rectangle"
+        tools:context=".MainActivity">
 
-
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/userPhoto"
-            android:layout_width="174dp"
-            android:layout_height="187dp"
-            android:layout_marginBottom="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/dataBlock"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/user_photo"
+            app:shapeAppearanceOverlay="@style/CircleImage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:elevation="4dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dataBlock"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@drawable/gradient_rectangle"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/card_background"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toBottomOf="@id/userPhoto"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/userPhoto">
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <TableLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/userId"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="ID: 12345"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="#333333"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="16dp">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                <TableRow>
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Имя: Иван Иванов"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="#333333"
+                app:layout_constraintTop_toBottomOf="@id/userId"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="ID:"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/userId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:fontFamily="sans-serif-light"
-                        android:text="null"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Имя:"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/userName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="null"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Дата рождения:"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/userBirthDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="null"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </TableRow>
-            </TableLayout>
+            <TextView
+                android:id="@+id/userBirthDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Дата рождения: 01.01.2000"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="#333333"
+                app:layout_constraintTop_toBottomOf="@id/userName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/educationDocumentsButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:background="@drawable/gradient_rectangle"
-            android:gravity="center_vertical"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/card_background"
             android:orientation="horizontal"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:elevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/dataBlock"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dataBlock">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Документы об образовании"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium" />
+                android:textColor="#333333"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/button2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/gradient_rectangle"
-            android:gravity="center_vertical"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/card_background"
             android:orientation="horizontal"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:elevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/educationDocumentsButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/educationDocumentsButton">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Гранты"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium" />
+                android:textColor="#333333"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/button3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/gradient_rectangle"
-            android:gravity="center_vertical"
+            android:background="@drawable/card_background"
             android:orientation="horizontal"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:elevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/button2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button2">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Публикации"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium" />
+                android:textColor="#333333"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
         </LinearLayout>
+
+        <!-- Кнопка для Logout -->
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Выйти из аккаунта"
+            app:layout_constraintTop_toBottomOf="@id/button3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
