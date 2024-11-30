@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+
     }
 
     override fun onStart() {
@@ -52,12 +53,13 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.main)
 
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        getUserInfoRequest(this)
         val tmp = getUser(this)
 
         Glide.with(this)
@@ -80,11 +82,22 @@ class MainActivity : AppCompatActivity() {
         //this.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
         //    .putString("access_token", null).apply()
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+       /* binding.scheduleButton.setOnClickListener {
+            val intent = Intent(this, ScheduleActivity::class.java)
+            startActivity(intent)
+        }*/
     }
 
     private fun logout() {
         val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        sharedPref.edit().clear().apply()
+        with(sharedPref.edit()) {
+            remove("access_token") // Удаляем access_token
+            remove("refresh_token") // Удаляем refresh_token
+            remove("token_expires_at") // Удаляем token_expires_at
+            remove("user") // Удаляем user
+            apply() // Применяем изменения
+        }
 
         Log.i("MainActivity.Logout", "User log outed")
     }

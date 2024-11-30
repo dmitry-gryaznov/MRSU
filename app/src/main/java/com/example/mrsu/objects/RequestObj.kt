@@ -199,7 +199,7 @@ object RequestObj {
         Log.i("saveAccessToken()", "Token saved : $expDate")
     }
 
-    private fun getAccessToken(context: Context): String? {
+    public fun getAccessToken(context: Context): String? {
         Log.i("getAccessToken()", "Started")
         val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         return sharedPref.getString("access_token", null)
