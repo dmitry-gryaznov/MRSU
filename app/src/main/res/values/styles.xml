@@ -3,4 +3,15 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="BottomNavigationIconStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <!-- Цвет иконок для кнопок -->
+        <item name="itemIconTint">@null</item>
+
+        <!-- Прозрачный фон для кнопок -->
+        <item name="itemBackground">@drawable/ripple_effect</item> <!-- Используем ripple -->
+        <!-- Отключаем текстовые подписи, если они не нужны -->
+        <item name="labelVisibilityMode">unlabeled</item>
+    </style>
+
 </resources>

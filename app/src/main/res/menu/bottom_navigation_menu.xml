@@ -4,9 +4,17 @@
         android:id="@+id/home"
         android:icon="@drawable/ic_home"
         android:title="Главная" />
+
     <item
         android:id="@+id/schedule"
         android:icon="@drawable/ic_schedule"
-        android:title="Расписание" />
+        android:title="Расписание"
+        />
+    <item
+        android:id="@+id/discipline"
+        android:icon="@drawable/ic_university"
+        android:title="Дисциплины"
+        />
+
 
 </menu>

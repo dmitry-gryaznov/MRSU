@@ -6,4 +6,6 @@
     <color name="blue">#2196F3</color>
     <color name="orange">#F26B3F</color>
     <color name="colorPressed">#FF5722</color>
+    <color name="bottomNavigation">#9361da</color>
+
 </resources>

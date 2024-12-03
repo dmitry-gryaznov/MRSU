@@ -1,0 +1,109 @@
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        android:background="#C0C0CE"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Название пары -->
+            <TextView
+                android:id="@+id/lesson_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Промышленные сети и протоколы"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+
+                android:textSize="16sp"
+                android:paddingBottom="4dp" />
+
+            <!-- Номер пары и время -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/lesson_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="5 пара"
+                    android:textColor="@color/bottomNavigation"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/lesson_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="16:20 - 17:50"
+                    android:textColor="@color/bottomNavigation"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Разделительная линия -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#3A3A3A"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Имя и Аудитория -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
+
+                    <!-- Имя преподавателя -->
+                    <TextView
+                        android:id="@+id/teacher_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:gravity="start"
+                        android:text="Рылов Сергей Андреевич"
+                        android:textColor="#757575"
+                        android:textSize="14sp" />
+
+                    <!-- Аудитория -->
+                    <TextView
+                        android:id="@+id/location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="A-10 (B-78)"
+                        android:textColor="#757575"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Фото преподавателя -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/teacher_photo"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/CircleImage" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>

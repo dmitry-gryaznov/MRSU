@@ -2,11 +2,9 @@ package com.example.mrsu.fragments
 
 import ScheduleAdapter
 import ScheduleItem
-import android.content.Context
+import android.content.res.Resources.Theme
 import android.os.Bundle
 import android.view.*
-import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +20,6 @@ class ScheduleFragment : Fragment() {
     private var _binding: FragmentScheduleBinding? = null
     private val binding get() = _binding!!
     private lateinit var repository: ScheduleRepository
-    private var token = ""
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private var currentWeekDate: Calendar = Calendar.getInstance()
     private var selectedDate: Calendar = Calendar.getInstance()
@@ -53,7 +50,7 @@ class ScheduleFragment : Fragment() {
                 R.id.secondSubgroup -> 2
                 else -> 0
             }
-            fetchTimeTable() // Обновляем расписание для текущего выбранного дня
+            fetchTimeTable()
         }
 
         // Обработчики переключения недель
@@ -87,37 +84,62 @@ class ScheduleFragment : Fragment() {
     }
 
     private fun updateDaysContainer(startOfWeek: Calendar) {
-        binding.daysContainer.removeAllViews()
+        val daysButtons = listOf(
+            Pair(binding.dayButton1, binding.dayText1),
+            Pair(binding.dayButton2, binding.dayText2),
+            Pair(binding.dayButton3, binding.dayText3),
+            Pair(binding.dayButton4, binding.dayText4),
+            Pair(binding.dayButton5, binding.dayText5),
+            Pair(binding.dayButton6, binding.dayText6),
+            Pair(binding.dayButton7, binding.dayText7)
+        )
 
-        val days = mutableListOf<Calendar>()
-        for (i in 0..6) {
-            val day = (startOfWeek.clone() as Calendar).apply {
-                add(Calendar.DAY_OF_WEEK, i)
+        val currentDayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+
+        for ((index, day) in daysButtons.withIndex()) {
+            val currentDay = (startOfWeek.clone() as Calendar).apply {
+                add(Calendar.DAY_OF_WEEK, index)
             }
-            days.add(day)
 
-            val button = Button(requireContext()).apply {
-                text = SimpleDateFormat("E, d MMM", Locale.getDefault()).format(day.time)
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    marginEnd = 8
-                    gravity = Gravity.CENTER
-                }
-                setOnClickListener {
-                    selectedDate = day
-                    fetchTimeTable()
-                }
+            val button = day.first
+            val text = day.second
+
+            // Обновляем текст кнопки и текстовое поле
+            button.text = currentDay.get(Calendar.DAY_OF_MONTH).toString()
+            text.text = SimpleDateFormat("EEE", Locale.getDefault()).format(currentDay.time).uppercase()
+
+            // Проверяем текущий день
+            if (currentDay.get(Calendar.DAY_OF_YEAR) == currentDayOfYear) {
+                button.setBackgroundResource(R.drawable.day_button_selected) // Фон текущего дня
+                button.tag = "currentDay" // Устанавливаем метку для текущего дня
+                selectedDate = currentDay
+            } else {
+                button.setBackgroundResource(R.drawable.day_button_default) // Фон по умолчанию
+                button.tag = "normalDay"
             }
-            binding.daysContainer.addView(button)
 
-            if (day.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
-                selectedDate = day
+            // Устанавливаем обработчик нажатия
+            button.setOnClickListener {
+                selectedDate = currentDay
                 fetchTimeTable()
+
+                // Снимаем выделение со всех кнопок, кроме текущего дня
+                daysButtons.forEach {
+                    val otherButton = it.first
+                    if (otherButton.tag != "currentDay") {
+                        otherButton.setBackgroundResource(R.drawable.day_button_default)
+                    }
+                }
+
+                // Устанавливаем выделение для нажатой кнопки
+                if (button.tag != "currentDay") {
+                    button.setBackgroundResource(R.drawable.day_button_pressed)
+                }
             }
         }
     }
+
+
 
     private fun fetchTimeTable() {
         CoroutineScope(Dispatchers.Main).launch {
