@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mrsu.R
 import com.example.mrsu.databinding.ActivityMainBinding
+import com.example.mrsu.fragments.DisciplFragment
 import com.example.mrsu.fragments.HomeFragment
 import com.example.mrsu.fragments.ScheduleFragment
 import com.example.mrsu.objects.RequestObj.getStudentSemesterRequest
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.discipline -> {
-                    loadFragment(ScheduleFragment())
+                    loadFragment(DisciplFragment())
                     true
                 }
 

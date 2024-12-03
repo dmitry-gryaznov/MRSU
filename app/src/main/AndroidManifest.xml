@@ -29,7 +29,6 @@
 
         <activity android:name=".activities.AuthActivity" />
         <activity android:name=".activities.DisciplAct" />
-        <activity android:name=".activities.ScheduleActivity"/>
 
     </application>
 
