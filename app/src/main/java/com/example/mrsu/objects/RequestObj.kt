@@ -26,19 +26,7 @@ object RequestObj {
     private val client = OkHttpClient()
     private val gson = Gson()
 
-    fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                    networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        } else {
-            @Suppress("DEPRECATION")
-            val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            activeNetworkInfo != null && activeNetworkInfo.isConnected
-        }
-    }
+
 
 
     //Запросы к Бд
@@ -317,7 +305,7 @@ object RequestObj {
 
     }
 
-    private fun getAccessToken(context: Context): String? {
+    public fun getAccessToken(context: Context): String? {
         Log.i("getAccessToken()", "Started")
         val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         return sharedPref.getString("access_token", null)
