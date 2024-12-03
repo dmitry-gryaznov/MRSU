@@ -1,5 +1,6 @@
 package com.example.mrsu.objects
 
+import StudentSemester
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
@@ -233,6 +234,68 @@ object RequestObj {
         })
     }
 
+    //Список дисциплин
+    fun getStudentSemesterRequest(
+        context: Context,
+        onSuccess: (StudentSemester) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        Log.i("getStudentSemesterRequest()", "Started")
+        val bearerToken = getAccessToken(context)
+
+        if (bearerToken.isNullOrEmpty()) {
+            Log.e("getStudentSemesterRequest()", "Token is null or empty")
+            onFailure("Токен не найден. Пожалуйста, авторизуйтесь.")
+            return
+        }
+
+        val url = "https://papi.mrsu.ru/v1/StudentSemester?selector=current"
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Authorization", "Bearer $bearerToken")
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                Log.e("getStudentSemesterRequest()", "Request failed: ${e.message}")
+                (context as? AppCompatActivity)?.runOnUiThread {
+                    onFailure("Ошибка сети: ${e.message}")
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    try {
+                        val semesterData = gson.fromJson(responseBody, StudentSemester::class.java)
+                        Log.i("getStudentSemesterRequest()", "Parsed response: $semesterData")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onSuccess(semesterData)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("getStudentSemesterRequest()", "Parsing failed: ${e.message}")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onFailure("Ошибка парсинга ответа: ${e.message}")
+                        }
+                    }
+                } else {
+                    val errorMessage = when (response.code) {
+                        401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
+                        500 -> "На сервере ведутся технические работы."
+                        else -> "Ошибка сервера: ${response.code}"
+                    }
+                    Log.e("getStudentSemesterRequest()", "Error: $errorMessage")
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onFailure(errorMessage)
+                    }
+                }
+            }
+        })
+    }
+
+
     //SharedPreferences
     private fun saveAccessToken(context: Context, accessTokenMessage: AccessTokenMessage) {
 
@@ -248,8 +311,10 @@ object RequestObj {
             .putString("refresh_token", accessTokenMessage.refreshToken)
             .putLong("token_expires_at", expiresAt)
             .apply()
-        val expDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(expiresAt * 1000))
         Log.i("saveAccessToken()", "Token saved : $accessTokenMessage")
+        val localTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(expiresAt * 1000))
+        Log.i("saveAccessToken()", "ExpiresAt (local): $localTime")
+
     }
 
     private fun getAccessToken(context: Context): String? {

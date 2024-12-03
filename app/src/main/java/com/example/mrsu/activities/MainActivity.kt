@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.example.mrsu.R
 import com.example.mrsu.databinding.ActivityMainBinding
+import com.example.mrsu.objects.RequestObj.getStudentSemesterRequest
 import com.example.mrsu.objects.RequestObj.getUser
 import com.example.mrsu.objects.RequestObj.getUserInfoRequest
 import com.example.mrsu.objects.RequestObj.isNetworkAvailable
@@ -53,18 +54,17 @@ class MainActivity : AppCompatActivity() {
 
         Log.i("MainActivity", "onStart()")
 
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_main
+        )
+
+        setContentView(binding.main)
+
         getUserInfoRequest(
             context = this,
             onSuccess = {
                 val tmp = getUser(this)
-
-                val binding: ActivityMainBinding = DataBindingUtil.setContentView(
-                    this,
-                    R.layout.activity_main
-                )
-
-                setContentView(binding.main)
-
                 ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
                     val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                     v.setPadding(
@@ -99,6 +99,33 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         )
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        getStudentSemesterRequest(
+            context = this,
+            onSuccess = { semesterData ->
+                Log.i("StudentSemester", "Данные получены: $semesterData")
+                // Используйте объект StudentSemester
+                semesterData.RecordBooks.forEach { recordBook ->
+                    Log.i("RecordBook", "Код: ${recordBook.Cod}, Факультет: ${recordBook.Faculty}")
+                    recordBook.Disciplines.forEach { discipline ->
+                        Log.i("Discipline", "Название: ${discipline.Title}, Семестр: ${discipline.PeriodString}")
+                    }
+                }
+            },
+            onFailure = { error ->
+                Log.e("StudentSemester", error)
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        // Listener для кнопки
+        binding.button.setOnClickListener {
+            Log.i("MainActivity", "Button clicked: Переход к дисциплинам")
+            val intent = Intent(this, DisciplAct::class.java)
+            startActivity(intent)
+        }
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
 
