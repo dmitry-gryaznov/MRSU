@@ -2,6 +2,7 @@ package com.example.mrsu.objects
 
 import android.content.Context
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 
 import com.example.mrsu.dataclasses.AccessTokenMessage
 import com.example.mrsu.dataclasses.User
@@ -67,7 +68,7 @@ object RequestObj {
             .post(formBody)
             .addHeader("Content-Type", "application/x-www-form-urlencoded")
             .build()
-        Log.i("ee", request.toString())
+
         client.newCall(request).enqueue(object : okhttp3.Callback {
 
             override fun onFailure(call: okhttp3.Call, e: IOException) {
@@ -91,7 +92,7 @@ object RequestObj {
                     }
                 } else {
 
-                    Log.w("getAccessTokenRequest()", "Server problem: " + { response.code })
+                    Log.w("getAccessTokenRequest()", "Server problem: " +  response.code.toString() )
                     onFailure("Ошибка сервера: ${response.code}")
                 }
             }
@@ -99,7 +100,11 @@ object RequestObj {
     }
 
     //Получить информацию о пользователе
-    fun getUserInfoRequest(context: Context) {
+    fun getUserInfoRequest(
+        context: Context,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
         Log.i("getUserInfoRequest()", "Started")
         val bearerToken = getAccessToken(context)
 
@@ -112,29 +117,47 @@ object RequestObj {
 
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.w("getUserInfoRequest()", "Request user failed: " + e.message.toString())
+                Log.w("getUserInfoRequest()", "Request user failed: ${e.message}")
+                (context as? AppCompatActivity)?.runOnUiThread {
+                    onFailure("Ошибка сети: ${e.message}")
+                }
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
                 if (response.isSuccessful) {
-                    val user = gson.fromJson(response.body?.string(), User::class.java)
-                    Log.i("getUserInfoRequest()", "Successful user request")
-                    saveUser(context, user)
-                }
-                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                else if (response.code == 401) {
+                    val responseBody = response.body?.string()
+                    try {
+                        val user = gson.fromJson(responseBody, User::class.java)
+                        saveUser(context, user)
+                        Log.i("getUserInfoRequest()", "Successful user request: $user")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onSuccess()
+                        }
+                    } catch (e: Exception) {
+                        Log.w("getUserInfoRequest()", "Parsing problem: ${e.message}")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onFailure("Ошибка парсинга ответа: ${e.message}")
+                        }
+                    }
+                } else if (response.code == 401) {
                     Log.w("getUserInfoRequest()", "Token dead")
-                }
-                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                else {
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onFailure("Токен недействителен")
+                    }
+                } else {
                     Log.w(
-                        "getUserInfoRequest(): ",
-                        "Unsuccessful user request" + response.code.toString()
+                        "getUserInfoRequest()",
+                        "Unsuccessful user request: ${response.code}"
                     )
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onFailure("Ошибка сервера: ${response.code}")
+                    }
                 }
             }
         })
     }
+
+
 
     //Получить расписанние (андрей сделает свое)
     fun getStudentTimeTable(context: Context) {
@@ -196,7 +219,7 @@ object RequestObj {
             .putLong("token_expires_at", expiresAt)
             .apply()
         val expDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(expiresAt * 1000))
-        Log.i("saveAccessToken()", "Token saved : $expDate")
+        Log.i("saveAccessToken()", "Token saved : $accessTokenMessage")
     }
 
     private fun getAccessToken(context: Context): String? {

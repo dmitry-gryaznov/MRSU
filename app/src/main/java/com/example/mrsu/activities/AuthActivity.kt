@@ -66,17 +66,30 @@ class AuthActivity : AppCompatActivity() {
                     username = binding.emailInput.text.toString(),
                     password = binding.passwordInput.text.toString(),
                     onSuccess = {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        getUserInfoRequest(this)
-
-                        Log.i("AuthActivity", "finish()")
-                        finish()
+                        getUserInfoRequest(
+                            context = this,
+                            onSuccess = {
+                                runOnUiThread {
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    startActivity(intent)
+                                    Log.i("AuthActivity", "finish()")
+                                    finish()
+                                }
+                            },
+                            onFailure = { errorMessage ->
+                                runOnUiThread {
+                                    Toast.makeText(this, "Ошибка: $errorMessage", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        )
                     },
                     onFailure = { errorMessage ->
-                        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                        runOnUiThread {
+                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+                        }
                     }
                 )
+
             }
         }
     }
