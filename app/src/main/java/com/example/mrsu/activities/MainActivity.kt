@@ -1,92 +1,55 @@
 package com.example.mrsu.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
+import androidx.fragment.app.Fragment
 import com.example.mrsu.R
-import com.example.mrsu.databinding.ActivityMainBinding
-import com.example.mrsu.objects.RequestObj.getUser
-import com.example.mrsu.objects.RequestObj.getUserInfoRequest
+import com.example.mrsu.fragments.HomeFragment
+import com.example.mrsu.fragments.ScheduleFragment
 import com.example.mrsu.objects.RequestObj.isTokenValid
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        Log.i("MainActivity", "onCreate()")
-
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
+        // Убедитесь, что токен валиден
         if (!isTokenValid(this)) {
-            onPause()
             val intent = Intent(this, AuthActivity::class.java)
             startActivity(intent)
-            Log.i("MainActivity", "finish()")
             finish()
             return
         }
 
-    }
+        // Установка разметки
+        setContentView(R.layout.activity_main)
 
-    override fun onStart() {
-        super.onStart()
+        // Загружаем главный фрагмент по умолчанию
+        loadFragment(HomeFragment())
 
-        Log.i("MainActivity", "onStart()")
-
-        getUserInfoRequest(this)
-        getUser(this)
-
-        val binding: ActivityMainBinding = DataBindingUtil.setContentView(
-            this,
-            R.layout.activity_main
-        )
-
-        setContentView(binding.main)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // Настройка нижней панели навигации
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> {
+                    loadFragment(HomeFragment())
+                    true
+                }
+                R.id.schedule -> {
+                    loadFragment(ScheduleFragment())
+                    true
+                }
+                else -> false
+            }
         }
-
-        val tmp = getUser(this)
-
-        Glide.with(this)
-            .load(tmp?.photo?.urlSmall)
-            .into(binding.userPhoto)
-        binding.userId.text = "ID: " + tmp?.id.toString().take(8)
-        binding.userName.text = "ФИО пользователя: " + tmp?.userName.toString()
-        binding.userBirthDate.text = "Дата рождения: " + tmp?.birthDate.toString().take(10)
-
-        binding.logoutButton.setOnClickListener {
-            Log.i("MainActivity", "ButtonLogout clicked")
-            logout()
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
-            Log.i("MainActivity", "finish()")
-            finish()
-        }
-
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //this.getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
-        //    .putString("access_token", null).apply()
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
-    private fun logout() {
-        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        sharedPref.edit().clear().apply()
-
-        Log.i("MainActivity.Logout", "User log outed")
+    // Метод для замены фрагмента в контейнере
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
-
 }

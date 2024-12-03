@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home"
+        android:title="Главная" />
+
+    <item
+        android:id="@+id/schedule"
+        android:icon="@drawable/ic_schedule"
+        android:title="Расписание"
+        />
+    <item
+        android:id="@+id/discipline"
+        android:icon="@drawable/ic_university"
+        android:title="Дисциплины"
+        />
+
+
+</menu>
