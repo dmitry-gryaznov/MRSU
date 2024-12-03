@@ -1,0 +1,13 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Основной фон -->
+    <item android:drawable="@color/white" /> <!-- Замените на нужный цвет фона -->
+
+    <!-- Логотип -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/mrsu_dark_bg_ru_short_bw" /> <!-- Ваш логотип -->
+    </item>
+
+</layer-list>

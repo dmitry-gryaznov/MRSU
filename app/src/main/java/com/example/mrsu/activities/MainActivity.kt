@@ -47,6 +47,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
+
+        setTheme(R.style.Theme_MRSU)
         super.onStart()
 
         Log.i("MainActivity", "onStart()")
