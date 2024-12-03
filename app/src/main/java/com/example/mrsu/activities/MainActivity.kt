@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,7 @@ import com.example.mrsu.R
 import com.example.mrsu.databinding.ActivityMainBinding
 import com.example.mrsu.objects.RequestObj.getUser
 import com.example.mrsu.objects.RequestObj.getUserInfoRequest
+import com.example.mrsu.objects.RequestObj.isNetworkAvailable
 import com.example.mrsu.objects.RequestObj.isTokenValid
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +28,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        if (!isNetworkAvailable(this)) Toast.makeText(
+            this,
+            "Нет подключения к сети, проверьте соединение",
+            Toast.LENGTH_LONG
+        ).show()
+
         if (!isTokenValid(this)) {
             onPause()
             val intent = Intent(this, AuthActivity::class.java)
@@ -34,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
+
 
     }
 
@@ -56,7 +65,12 @@ class MainActivity : AppCompatActivity() {
 
                 ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
                     val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                    v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+                    v.setPadding(
+                        systemBars.left,
+                        systemBars.top,
+                        systemBars.right,
+                        systemBars.bottom
+                    )
                     insets
                 }
 

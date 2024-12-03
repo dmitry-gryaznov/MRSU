@@ -69,26 +69,21 @@ class AuthActivity : AppCompatActivity() {
                         getUserInfoRequest(
                             context = this,
                             onSuccess = {
-                                runOnUiThread {
-                                    val intent = Intent(this, MainActivity::class.java)
-                                    startActivity(intent)
-                                    Log.i("AuthActivity", "finish()")
-                                    finish()
-                                }
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                Log.i("AuthActivity", "finish()")
+                                finish()
                             },
                             onFailure = { errorMessage ->
-                                runOnUiThread {
-                                    Toast.makeText(this, "Ошибка: $errorMessage", Toast.LENGTH_LONG).show()
-                                }
+                                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
                             }
                         )
                     },
                     onFailure = { errorMessage ->
-                        runOnUiThread {
-                            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-                        }
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
                     }
                 )
+
 
             }
         }

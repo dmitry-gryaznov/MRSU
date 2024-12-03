@@ -1,9 +1,12 @@
 package com.example.mrsu.objects
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-
 import com.example.mrsu.dataclasses.AccessTokenMessage
 import com.example.mrsu.dataclasses.User
 import com.google.gson.Gson
@@ -16,11 +19,28 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+
 object RequestObj {
 
     private val client = OkHttpClient()
     private val gson = Gson()
 
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                    networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        } else {
+            @Suppress("DEPRECATION")
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
+    }
+
+
+    //Запросы к Бд
     fun isTokenValid(context: Context): Boolean {
         Log.i("isTokenValid()", "Started")
         val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -41,8 +61,6 @@ object RequestObj {
         Log.i("isTokenValid()", "Token valid. Expires at $expiresAt")
         return true
     }
-
-    //Запросы к Бд
 
     //Получить токен
     fun getAccessTokenRequest(
@@ -72,8 +90,10 @@ object RequestObj {
         client.newCall(request).enqueue(object : okhttp3.Callback {
 
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.w("getAccessTokenRequest()", e.message.toString())
-                onFailure("Ошибка сети: ${e.message}")
+                Log.w("getAccessTokenRequest()", "Network error: ${e.message}")
+                (context as? AppCompatActivity)?.runOnUiThread {
+                    onFailure("Нет подключения к интернету. Проверьте сетевое соединение.")
+                }
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
@@ -83,21 +103,31 @@ object RequestObj {
                         val accessTokenMessage =
                             gson.fromJson(responseBody, AccessTokenMessage::class.java)
                         saveAccessToken(context, accessTokenMessage)
-                        Log.w("getAccessTokenRequest()", "Successful request: $accessTokenMessage")
-
-                        onSuccess()
+                        Log.i("getAccessTokenRequest()", "Successful request: $accessTokenMessage")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onSuccess()
+                        }
                     } catch (e: Exception) {
-                        Log.w("getAccessTokenRequest()", "Parsing problem: " + e.message.toString())
-                        onFailure("Ошибка парсинга ответа: ${e.message}")
+                        Log.w("getAccessTokenRequest()", "Parsing problem: ${e.message}")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onFailure("Ошибка парсинга ответа: ${e.message}")
+                        }
                     }
                 } else {
-
-                    Log.w("getAccessTokenRequest()", "Server problem: " +  response.code.toString() )
-                    onFailure("Ошибка сервера: ${response.code}")
+                    val errorMessage = when (response.code) {
+                        400 -> "Некорректные данные. Проверьте введённый логин и пароль."
+                        in 500..599 -> "Технические работы на сервере. Попробуйте позже."
+                        else -> "Неизвестная ошибка. Код ошибки: ${response.code}"
+                    }
+                    Log.w("getAccessTokenRequest()", "Server error: $errorMessage")
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onFailure(errorMessage)
+                    }
                 }
             }
         })
     }
+
 
     //Получить информацию о пользователе
     fun getUserInfoRequest(
