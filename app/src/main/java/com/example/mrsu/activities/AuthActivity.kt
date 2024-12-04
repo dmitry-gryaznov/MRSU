@@ -63,11 +63,12 @@ class AuthActivity : AppCompatActivity() {
             } else {
                 performLogin()
             }
-       //биометрической аутентификации
+
+    }
+        //биометрической аутентификации
         binding.biometricButton.setOnClickListener {
             promptBiometricAuthentication()
         }
-    }
     }
 
     private fun setupBiometricAuthentication() {
