@@ -64,7 +64,7 @@
         <View
             android:id="@+id/bottom_reserved_space"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
+            android:layout_height="47dp"
             android:layout_alignParentBottom="true"
             android:background="#FFFFFF" />
     </RelativeLayout>
