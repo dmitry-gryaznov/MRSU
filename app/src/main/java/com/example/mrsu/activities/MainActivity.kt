@@ -2,54 +2,106 @@ package com.example.mrsu.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mrsu.R
+import com.example.mrsu.databinding.ActivityMainBinding
+import com.example.mrsu.fragments.DisciplFragment
 import com.example.mrsu.fragments.HomeFragment
 import com.example.mrsu.fragments.ScheduleFragment
+import com.example.mrsu.objects.RequestObj.getStudentSemesterRequest
+import com.example.mrsu.objects.RequestObj.getUser
+import com.example.mrsu.objects.RequestObj.getUserInfoRequest
 import com.example.mrsu.objects.RequestObj.isTokenValid
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Убедитесь, что токен валиден
+        // Проверка токена
         if (!isTokenValid(this)) {
             val intent = Intent(this, AuthActivity::class.java)
             startActivity(intent)
             finish()
             return
         }
+        getUserInfoRequest(
+            context = this,
+            onSuccess = {
+                val user = getUser(this)
+                // Настройка нижней панели навигации
+                setupBottomNavigation()
 
-        // Установка разметки
-        setContentView(R.layout.activity_main)
+                // Загрузка фрагмента по умолчанию
+                loadFragment(HomeFragment())
+            },
+            onFailure = { errorMessage ->
+                Log.e("MainActivity", "Failed to load user info: $errorMessage")
+                val intent = Intent(this, AuthActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        )
 
-        // Загружаем главный фрагмент по умолчанию
-        loadFragment(HomeFragment())
+        // Настройка привязки разметки через DataBinding
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        // Настройка нижней панели навигации
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigation.setOnItemSelectedListener { item ->
+
+        // Настройка кнопки Logout
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // Загружаем информацию о пользователе
+
+
+        // Загружаем информацию о семестре
+        getStudentSemesterRequest(
+            context = this,
+            onSuccess = { semesterData ->
+                Log.i("StudentSemester", "Данные получены: $semesterData")
+            },
+            onFailure = { error ->
+                Log.e("StudentSemester", error)
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
                     loadFragment(HomeFragment())
                     true
                 }
+
                 R.id.schedule -> {
                     loadFragment(ScheduleFragment())
                     true
                 }
+
+                R.id.discipline -> {
+                    loadFragment(DisciplFragment())
+                    true
+                }
+
                 else -> false
             }
         }
     }
 
-    // Метод для замены фрагмента в контейнере
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+            .replace(binding.fragmentContainer.id, fragment)
             .commit()
     }
+
 }

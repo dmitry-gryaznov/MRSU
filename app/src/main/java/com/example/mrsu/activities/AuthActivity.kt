@@ -63,12 +63,11 @@ class AuthActivity : AppCompatActivity() {
             } else {
                 performLogin()
             }
-        }
-
-        // Кнопка биометрической аутентификации
+       //биометрической аутентификации
         binding.biometricButton.setOnClickListener {
             promptBiometricAuthentication()
         }
+    }
     }
 
     private fun setupBiometricAuthentication() {
@@ -89,11 +88,6 @@ class AuthActivity : AppCompatActivity() {
 
 
                     if (!savedEmail.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-                       /* Toast.makeText(
-                            this@AuthActivity,
-                            "Биометрическая аутентификация успешна",
-                            Toast.LENGTH_SHORT
-                        ).show()*/
                         getAccessTokenRequest(
                             context = this@AuthActivity,
                             urlString = "https://p.mrsu.ru/OAuth/Token",
@@ -102,7 +96,6 @@ class AuthActivity : AppCompatActivity() {
                             onSuccess = {
                                 val intent = Intent(this@AuthActivity, MainActivity::class.java)
                                 startActivity(intent)
-                                getUserInfoRequest(this@AuthActivity)
                                 finish()
                             },
                             onFailure = { errorMessage ->
@@ -156,7 +149,6 @@ class AuthActivity : AppCompatActivity() {
 
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-                getUserInfoRequest(this)
                 finish()
             },
             onFailure = { errorMessage ->
