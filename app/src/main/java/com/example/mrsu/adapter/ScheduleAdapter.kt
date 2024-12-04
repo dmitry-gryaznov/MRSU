@@ -63,7 +63,7 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
         )
         val (number, info) = scheduleItems[position]
 
-        holder.lessonNumber.text = "${number} пара"
+        holder.lessonNumber.text = "${position + 1} пара"
         holder.lessonTime.text = pairTimes.getOrNull(position) ?: ""
 
         if (info != null) {
@@ -74,7 +74,7 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
             holder.teacherPhoto.visibility = View.VISIBLE
 
             holder.lessonTitle.text = info.title
-            holder.location.text = "Аудитория: ${info.campusTitle} ${info.auditoriumNumber}"
+            holder.location.text = "Корпус: ${info.campusTitle}; Аудитория: ${info.auditoriumNumber}"
             holder.teacherName.text = info.teacherName
 
             // Используем Glide для загрузки фото преподавателя
@@ -83,6 +83,7 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
                 .into(holder.teacherPhoto)
         } else {
             // Скрываем элементы, если пары нет
+
             holder.lessonTitle.visibility = View.GONE
             holder.location.visibility = View.GONE
             holder.teacherName.visibility = View.GONE
