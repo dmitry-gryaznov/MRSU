@@ -66,6 +66,7 @@ class ScheduleFragment : Fragment() {
 
         // Изначальная настройка недели и дней
         updateWeek()
+        fetchTimeTable()
     }
 
     private fun updateWeek() {
