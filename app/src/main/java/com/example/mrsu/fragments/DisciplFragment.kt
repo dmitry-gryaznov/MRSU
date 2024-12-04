@@ -58,7 +58,8 @@ class DisciplFragment : Fragment() {
                 // Создаем кнопку для отображения дисциплины
                 val button = Button(requireContext()).apply {
                     text = "Название: ${discipline.Title}\nСеместр: ${discipline.PeriodString}"
-                    gravity = Gravity.CENTER
+                    isAllCaps = false
+                    gravity = Gravity.CENTER_VERTICAL
                     setBackgroundResource(R.drawable.rounded_button_background)
                     setPadding(20, 20, 20, 20)
                 }
