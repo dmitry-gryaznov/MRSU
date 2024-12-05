@@ -57,13 +57,17 @@ class DisciplFragment : Fragment() {
             recordBook.Disciplines.forEach { discipline ->
                 // Создаем кнопку для отображения дисциплины
                 val button = Button(requireContext()).apply {
+                    id = discipline.Id
                     text = "Название: ${discipline.Title}\nСеместр: ${discipline.PeriodString}"
                     isAllCaps = false
                     gravity = Gravity.CENTER_VERTICAL
                     setBackgroundResource(R.drawable.rounded_button_background)
                     setPadding(20, 20, 20, 20)
-                }
 
+                    setOnClickListener {
+                        navigateToNextFragment(discipline.Id)
+                    }
+                }
                 // Настраиваем параметры кнопки
                 val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -71,10 +75,24 @@ class DisciplFragment : Fragment() {
                 ).apply {
                     setMargins(0, 16, 0, 16) // Добавляет отступы между кнопками
                 }
-
                 // Добавляем кнопку в контейнер
                 container.addView(button, params)
             }
         }
+    }
+
+    private fun navigateToNextFragment(id: Int) {
+        // Создаём экземпляр NextFragment и передаём аргументы
+        val nextFragment = RatingPlanFragment().apply {
+            arguments = Bundle().apply {
+                putInt("id", id) // Передаём id как аргумент
+            }
+        }
+
+        // Выполняем транзакцию для перехода на следующий фрагмент
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, nextFragment) // Убедитесь, что fragment_container соответствует вашему макету
+            .addToBackStack(null) // Добавляем в back stack, чтобы можно было вернуться назад
+            .commit()
     }
 }

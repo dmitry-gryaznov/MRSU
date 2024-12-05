@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF"
+    android:layout_marginBottom="8dp"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/controlPointTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Лабораторная работа 1"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/dueDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Срок сдачи: 25.09.2024" />
+
+    <TextView
+        android:id="@+id/submissionDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Дата добавления отчёта: 28.09.2024" />
+
+    <TextView
+        android:id="@+id/reportLink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отчёт: Скачать файл"
+        android:textColor="#1976D2"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/grade"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Балл: 5.0 / 5.0" />
+</LinearLayout>
