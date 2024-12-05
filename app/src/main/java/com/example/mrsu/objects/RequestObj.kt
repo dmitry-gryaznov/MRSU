@@ -1,11 +1,8 @@
 package com.example.mrsu.objects
 
+import StudentRatingPlanResponse
 import StudentSemester
-import android.annotation.SuppressLint
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mrsu.dataclasses.AccessTokenMessage
@@ -25,8 +22,6 @@ object RequestObj {
 
     private val client = OkHttpClient()
     private val gson = Gson()
-
-
 
 
     //Запросы к Бд
@@ -176,52 +171,6 @@ object RequestObj {
         })
     }
 
-
-
-    //Получить расписанние (андрей сделает свое)
-    fun getStudentTimeTable(context: Context) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'00:00:00", Locale.getDefault())
-        val currentDate = formatter.format(Date())
-        // URL с закодированной датой
-        val url = "https://papi.mrsu.ru/v1/StudentTimeTable?date=$currentDate"
-
-        // Получение токена (замените функцией для вашего приложения)
-        val accessToken = getAccessToken(context)
-
-        // Создание клиента
-        val client = OkHttpClient()
-
-        // Создание запроса
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .addHeader("Authorization", "Bearer $accessToken")
-            .addHeader("Content-Type", "application/json; charset=utf-8")
-            .build()
-
-        // Выполнение запроса
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                // Обработка ошибки
-                Log.e("TimeTableRequest", "Request failed: ${e.message}")
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                // Проверяем успешность ответа
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
-                    Log.i("TimeTableRequest", "Response: $responseBody")
-                    // Обработайте JSON-ответ при необходимости
-                } else {
-                    Log.e(
-                        "TimeTableRequest",
-                        "Error: ${response.code}, Message: ${response.message}"
-                    )
-                }
-            }
-        })
-    }
-
     //Список дисциплин
     fun getStudentSemesterRequest(
         context: Context,
@@ -283,6 +232,68 @@ object RequestObj {
         })
     }
 
+    //Получить рейтинг план по id
+    fun getStudentRatingPlan(
+        context: Context,
+        disciplineId: Int,
+        onSuccess: (StudentRatingPlanResponse) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        Log.i("getStudentRatingPlan", "Started")
+        val bearerToken = getAccessToken(context)
+
+        if (bearerToken.isNullOrEmpty()) {
+            Log.e("getStudentRatingPlan", "Token is null or empty")
+            onFailure("Токен не найден. Пожалуйста, авторизуйтесь.")
+            return
+        }
+
+        val url = "https://papi.mrsu.ru/v1/StudentRatingPlan/?id=$disciplineId"
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Authorization", "Bearer $bearerToken")
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                Log.e("getStudentRatingPlan", "Request failed: ${e.message}")
+                (context as? AppCompatActivity)?.runOnUiThread {
+                    onFailure("Ошибка сети: ${e.message}")
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    try {
+                        val parsedResponse = gson.fromJson(responseBody, StudentRatingPlanResponse::class.java)
+                        Log.i("getStudentRatingPlan", "Parsed response: $parsedResponse")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onSuccess(parsedResponse)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("getStudentRatingPlan", "Parsing failed: ${e.message}")
+                        (context as? AppCompatActivity)?.runOnUiThread {
+                            onFailure("Ошибка обработки ответа: ${e.message}")
+                        }
+                    }
+                } else {
+                    val errorMessage = when (response.code) {
+                        401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
+                        500 -> "На сервере ведутся технические работы."
+                        else -> "Ошибка сервера: ${response.code}"
+                    }
+                    Log.e("getStudentRatingPlan", "Error: $errorMessage")
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onFailure(errorMessage)
+                    }
+                }
+            }
+        })
+    }
+
 
     //SharedPreferences
     private fun saveAccessToken(context: Context, accessTokenMessage: AccessTokenMessage) {
@@ -300,7 +311,10 @@ object RequestObj {
             .putLong("token_expires_at", expiresAt)
             .apply()
         Log.i("saveAccessToken()", "Token saved : $accessTokenMessage")
-        val localTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(expiresAt * 1000))
+        val localTime = SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss",
+            Locale.getDefault()
+        ).format(Date(expiresAt * 1000))
         Log.i("saveAccessToken()", "ExpiresAt (local): $localTime")
 
     }

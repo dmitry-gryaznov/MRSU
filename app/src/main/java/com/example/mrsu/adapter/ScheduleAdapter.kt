@@ -5,9 +5,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mrsu.R
+import com.example.mrsu.adap_inter.OnDisciplineClickListener
 import com.google.android.material.imageview.ShapeableImageView
 
-class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
+class ScheduleAdapter(private val listener: OnDisciplineClickListener) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
     private val scheduleItems = Array(8) { "" to null as DisciplineInfo? } // 8 строк для расписания
 
@@ -26,6 +27,7 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
                 if (filteredDisciplines.isNotEmpty()) {
                     val discipline = filteredDisciplines.first() // Берем первую дисциплину
                     val disciplineInfo = DisciplineInfo(
+                        id = discipline.id,
                         title = discipline.title,
                         campusTitle = discipline.auditorium.campusTitle,
                         auditoriumNumber = discipline.auditorium.number,
@@ -81,6 +83,10 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
             Glide.with(holder.itemView.context)
                 .load(info.teacherPhotoUrl)
                 .into(holder.teacherPhoto)
+
+            holder.itemView.setOnClickListener{
+                listener.onDisciplineClick(info.id)
+            }
         } else {
             // Скрываем элементы, если пары нет
 
@@ -88,12 +94,14 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
             holder.location.visibility = View.GONE
             holder.teacherName.visibility = View.GONE
             holder.teacherPhoto.visibility = View.GONE
+            holder.itemView.setOnClickListener(null)
         }
     }
 
     override fun getItemCount(): Int = scheduleItems.size
 
     data class DisciplineInfo(
+        val id: Int,
         val title: String,
         val campusTitle: String,
         val auditoriumNumber: String,

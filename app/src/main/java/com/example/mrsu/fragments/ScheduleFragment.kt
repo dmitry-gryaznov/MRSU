@@ -9,13 +9,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mrsu.R
+import com.example.mrsu.adap_inter.OnDisciplineClickListener
 import com.example.mrsu.databinding.FragmentScheduleBinding
 import com.example.mrsu.repository.ScheduleRepository
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ScheduleFragment : Fragment() {
+class ScheduleFragment : Fragment(), OnDisciplineClickListener {
 
     private var _binding: FragmentScheduleBinding? = null
     private val binding get() = _binding!!
@@ -23,7 +24,7 @@ class ScheduleFragment : Fragment() {
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private var currentWeekDate: Calendar = Calendar.getInstance()
     private var selectedDate: Calendar = Calendar.getInstance()
-    private val adapter = ScheduleAdapter()
+    private lateinit var adapter: ScheduleAdapter
     private var selectedSubgroup = 1
 
     override fun onCreateView(
@@ -40,6 +41,7 @@ class ScheduleFragment : Fragment() {
         repository = ScheduleRepository(requireContext())
 
         // Настройка RecyclerView
+        adapter = ScheduleAdapter(this)
         binding.scheduleRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.scheduleRecyclerView.adapter = adapter
 
@@ -164,4 +166,33 @@ class ScheduleFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onDisciplineClick(disciplineId: Int) {
+        navigateToNextFragment(disciplineId)
+    }
+
+    private fun navigateToNextFragment(id: Int) {
+        // Создаём экземпляр NextFragment и передаём аргументы
+        val nextFragment = RatingPlanFragment().apply {
+            arguments = Bundle().apply {
+                putInt("id", id) // Передаём id как аргумент
+            }
+        }
+
+        // Проверяем, является ли fragmentManager доступным
+        if (isAdded && !isStateSaved) {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, nextFragment) // Убедитесь, что fragment_container соответствует вашему макету
+                .addToBackStack(null) // Добавляем в back stack, чтобы можно было вернуться назад
+                .commit()
+        } else {
+            // Используем commitAllowingStateLoss, если состояние уже сохранено
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, nextFragment)
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
+    }
+
+
 }

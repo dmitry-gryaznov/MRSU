@@ -12,6 +12,7 @@ data class RecordBook(
 )
 
 data class Disc(
+    val Id: Int,
     val Title: String,
     val PeriodString: String,
     val Faculty: String
