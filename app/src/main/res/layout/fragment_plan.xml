@@ -17,23 +17,10 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Topic Description -->
-        <TextView
-            android:id="@+id/topicDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:padding="16dp"
-            android:background="#E3F2FD"
-            android:text="Описание темы"
-            android:textColor="#333333"
-            app:layout_constraintTop_toBottomOf="@id/disciplineTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Control Points List -->
         <androidx.recyclerview.widget.RecyclerView
@@ -41,10 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="16dp"
-            app:layout_constraintTop_toBottomOf="@id/topicDescription"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="367dp"
+            app:layout_constraintBottom_toTopOf="@id/totalScoreFooter"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/totalScoreFooter" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/disciplineTitle" />
 
         <!-- Footer -->
         <TextView

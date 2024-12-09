@@ -217,7 +217,8 @@ object RequestObj {
                             onFailure("Ошибка парсинга ответа: ${e.message}")
                         }
                     }
-                } else {
+                }
+                else {
                     val errorMessage = when (response.code) {
                         401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
                         500 -> "На сервере ведутся технические работы."

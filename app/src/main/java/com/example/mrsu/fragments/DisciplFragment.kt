@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mrsu.R
@@ -51,37 +52,71 @@ class DisciplFragment : Fragment() {
     private fun displayStudentSemester(studentSemester: StudentSemester) {
         // Получаем контейнер из XML
         val container = binding.container
+        container.removeAllViews() // Убедимся, что контейнер пуст
 
-        // Проходимся по всем дисциплинам и добавляем их в контейнер
-        studentSemester.RecordBooks.forEach { recordBook ->
-            recordBook.Disciplines.forEach { discipline ->
-                // Создаем кнопку для отображения дисциплины
+        // Группируем дисциплины по факультетам
+        val groupedByFaculty = studentSemester.RecordBooks.groupBy { it.Faculty }
+
+        // Проходимся по каждому факультету и его дисциплинам
+        groupedByFaculty.forEach { (faculty, recordBooks) ->
+            // Создаём плашку для факультета
+            val facultyHeader = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setBackgroundResource(R.drawable.faculty_background) // Ресурс для плашки
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, // Плашка на всю ширину
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 16, 0, 0) // Отступ сверху
+                }
+                setPadding(16, 16, 16, 16)
+            }
+
+            // Текст внутри плашки
+            val facultyTitle = TextView(requireContext()).apply {
+                setTextColor(resources.getColor(android.R.color.black, null))
+                text = faculty
+                textSize = 18f
+                gravity = Gravity.CENTER
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, // Текст на всю ширину плашки
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+            facultyHeader.addView(facultyTitle)
+            container.addView(facultyHeader)
+
+            // Добавляем все дисциплины для текущего факультета
+            recordBooks.flatMap { it.Disciplines }.forEach { discipline ->
                 val button = Button(requireContext()).apply {
                     id = discipline.Id
-                    text = "Название: ${discipline.Title}\nСеместр: ${discipline.PeriodString}"
+                    text = discipline.Title
                     isAllCaps = false
                     gravity = Gravity.CENTER_VERTICAL
                     setBackgroundResource(R.drawable.rounded_button_background)
                     setPadding(20, 20, 20, 20)
 
+                    // Переход при нажатии
                     setOnClickListener {
                         navigateToNextFragment(discipline.Id, discipline.Title)
                     }
                 }
-                // Настраиваем параметры кнопки
+
                 val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    setMargins(0, 16, 0, 16) // Добавляет отступы между кнопками
+                    setMargins(0, 16, 0, 16)
                 }
-                // Добавляем кнопку в контейнер
+
                 container.addView(button, params)
             }
         }
     }
 
     private fun navigateToNextFragment(id: Int, name: String) {
+
         // Создаём экземпляр NextFragment и передаём аргументы
         val nextFragment = RatingPlanFragment().apply {
             arguments = Bundle().apply {
