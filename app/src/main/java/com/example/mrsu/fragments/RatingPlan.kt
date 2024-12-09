@@ -52,6 +52,7 @@ class RatingPlanFragment : Fragment() {
                 topics.clear()
                 topics.addAll(response.Sections)
                 topicAdapter.notifyDataSetChanged()
+                updateTotalScore(response.Sections)
             },
             onFailure = { error ->
                 Log.e("StudentRatingPlan", "Error: $error")
@@ -63,4 +64,18 @@ class RatingPlanFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun updateTotalScore(sections: List<Section>) {
+        // Считаем сумму всех баллов
+        val totalScore = sections.flatMap { it.ControlDots }
+            .mapNotNull { it.Mark?.Ball }
+            .sum()
+
+        // Форматируем текст
+        val formattedScore = "Всего: %.1f / 100.0".format(totalScore)
+
+        // Обновляем текст в footer
+        binding.totalScoreFooter.text = formattedScore
+    }
+
 }
