@@ -65,7 +65,7 @@ class DisciplFragment : Fragment() {
                     setPadding(20, 20, 20, 20)
 
                     setOnClickListener {
-                        navigateToNextFragment(discipline.Id)
+                        navigateToNextFragment(discipline.Id, discipline.Title)
                     }
                 }
                 // Настраиваем параметры кнопки
@@ -81,11 +81,12 @@ class DisciplFragment : Fragment() {
         }
     }
 
-    private fun navigateToNextFragment(id: Int) {
+    private fun navigateToNextFragment(id: Int, name: String) {
         // Создаём экземпляр NextFragment и передаём аргументы
         val nextFragment = RatingPlanFragment().apply {
             arguments = Bundle().apply {
-                putInt("id", id) // Передаём id как аргумент
+                putInt("id", id)
+                putString("name", name)
             }
         }
 

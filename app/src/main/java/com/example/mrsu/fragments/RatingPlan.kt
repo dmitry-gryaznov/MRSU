@@ -32,6 +32,8 @@ class RatingPlanFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        val disciplineName = arguments?.getString("name") ?:""
+        binding.disciplineTitle.text = disciplineName
 
         val disciplineId = arguments?.getInt("id") ?: -1
         fetchRatingPlan(disciplineId)
