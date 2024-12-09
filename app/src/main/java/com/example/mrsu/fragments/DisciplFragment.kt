@@ -99,7 +99,7 @@ class DisciplFragment : Fragment() {
 
                     // Переход при нажатии
                     setOnClickListener {
-                        navigateToNextFragment(discipline.Id)
+                        navigateToNextFragment(discipline.Id, discipline.Title)
                     }
                 }
 
@@ -115,14 +115,13 @@ class DisciplFragment : Fragment() {
         }
     }
 
+    private fun navigateToNextFragment(id: Int, name: String) {
 
-
-
-    private fun navigateToNextFragment(id: Int) {
         // Создаём экземпляр NextFragment и передаём аргументы
         val nextFragment = RatingPlanFragment().apply {
             arguments = Bundle().apply {
-                putInt("id", id) // Передаём id как аргумент
+                putInt("id", id)
+                putString("name", name)
             }
         }
 

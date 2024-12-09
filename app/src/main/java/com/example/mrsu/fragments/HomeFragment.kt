@@ -33,22 +33,19 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val context = requireContext()
-        val user = getUser(context)
+        var user = getUser(context)
+        updateUserInfo(user)
 
         // Загрузка информации о пользователе
         getUserInfoRequest(
             context = context,
             onSuccess = {
-                val user = getUser(context)
+                user = getUser(context)
                 updateUserInfo(user)
             },
             onFailure = {
             }
         )
-        Glide.with(context).load(user?.photo?.urlSmall).into(binding.userPhoto)
-        binding.userId.text = "ID: ${user?.id.toString().take(8)}"
-        binding.userName.text = "ФИО: ${user?.userName}"
-        binding.userBirthDate.text = "Дата рождения: ${user?.birthDate.toString().take(10)}"
 
         // Логика для кнопки выхода
         binding.logoutButton.setOnClickListener {
@@ -76,9 +73,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateUserInfo(user: User?) {
-        binding.userId.text = "ID: ${user?.id.toString().take(8)}"
-        binding.userName.text = "ФИО пользователя: ${user?.userName}"
-        binding.userBirthDate.text = "Дата рождения: ${user?.birthDate.toString().take(10)}"
+        binding?.let {
+            Glide.with(requireContext()).load(user?.photo?.urlSmall).into(it.userPhoto)
+            it.userId.text = "ID: ${user?.id.toString().take(8)}"
+            it.userName.text = "ФИО пользователя: ${user?.userName ?: "Неизвестно"}"
+            it.userBirthDate.text = "Дата рождения: ${user?.birthDate.toString().take(10)}"
+        }
     }
 
 }

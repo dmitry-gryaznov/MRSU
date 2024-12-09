@@ -167,15 +167,16 @@ class ScheduleFragment : Fragment(), OnDisciplineClickListener {
         _binding = null
     }
 
-    override fun onDisciplineClick(disciplineId: Int) {
-        navigateToNextFragment(disciplineId)
+    override fun onDisciplineClick(disciplineId: Int, disciplineName: String) {
+        navigateToNextFragment(disciplineId, disciplineName)
     }
 
-    private fun navigateToNextFragment(id: Int) {
+    private fun navigateToNextFragment(id: Int, name: String) {
         // Создаём экземпляр NextFragment и передаём аргументы
         val nextFragment = RatingPlanFragment().apply {
             arguments = Bundle().apply {
-                putInt("id", id) // Передаём id как аргумент
+                putInt("id", id)
+                putString("name", name)
             }
         }
 

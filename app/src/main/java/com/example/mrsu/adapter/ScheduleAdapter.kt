@@ -85,7 +85,7 @@ class ScheduleAdapter(private val listener: OnDisciplineClickListener) : Recycle
                 .into(holder.teacherPhoto)
 
             holder.itemView.setOnClickListener{
-                listener.onDisciplineClick(info.id)
+                listener.onDisciplineClick(info.id, info.title)
             }
         } else {
             // Скрываем элементы, если пары нет
