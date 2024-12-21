@@ -15,6 +15,11 @@
         android:icon="@drawable/ic_university"
         android:title="Дисциплины"
         />
+    <item
+        android:id="@+id/turnstile"
+        android:icon="@drawable/turnstile"
+        android:title="Турникет"
+        />
 
 
 </menu>

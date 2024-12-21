@@ -12,6 +12,7 @@ import com.example.mrsu.databinding.ActivityMainBinding
 import com.example.mrsu.fragments.DisciplFragment
 import com.example.mrsu.fragments.HomeFragment
 import com.example.mrsu.fragments.ScheduleFragment
+import com.example.mrsu.fragments.TurnstileFragment
 import com.example.mrsu.objects.RequestObj.getStudentSemesterRequest
 import com.example.mrsu.objects.RequestObj.getUser
 import com.example.mrsu.objects.RequestObj.getUserInfoRequest
@@ -90,6 +91,11 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.discipline -> {
                     loadFragment(DisciplFragment())
+                    true
+                }
+
+                R.id.turnstile -> {
+                    loadFragment(TurnstileFragment())
                     true
                 }
 

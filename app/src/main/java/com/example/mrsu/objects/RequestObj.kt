@@ -218,10 +218,11 @@ object RequestObj {
                         }
                     }
                 }
-                else {
+                else if (response.code == 500) {
+                } else {
                     val errorMessage = when (response.code) {
                         401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
-                        500 -> "На сервере ведутся технические работы."
+                        //500 -> "На сервере ведутся технические работы."
                         else -> "Ошибка сервера: ${response.code}"
                     }
                     Log.e("getStudentSemesterRequest()", "Error: $errorMessage")
@@ -269,7 +270,8 @@ object RequestObj {
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
                     try {
-                        val parsedResponse = gson.fromJson(responseBody, StudentRatingPlanResponse::class.java)
+                        val parsedResponse =
+                            gson.fromJson(responseBody, StudentRatingPlanResponse::class.java)
                         Log.i("getStudentRatingPlan", "Parsed response: $parsedResponse")
                         (context as? AppCompatActivity)?.runOnUiThread {
                             onSuccess(parsedResponse)
