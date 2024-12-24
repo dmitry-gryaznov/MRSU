@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mrsu.R
 import com.example.mrsu.databinding.ActivityMainBinding
+import com.example.mrsu.fragments.ChatFragment
 import com.example.mrsu.fragments.DisciplFragment
 import com.example.mrsu.fragments.HomeFragment
 import com.example.mrsu.fragments.ScheduleFragment
@@ -98,9 +99,8 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(TurnstileFragment())
                     true
                 }
-                //TODO вставьте фрагмент с чатом
                 R.id.chat ->{
-                    //loadFragment()
+                    loadFragment(ChatFragment())
                     true
                 }
 
