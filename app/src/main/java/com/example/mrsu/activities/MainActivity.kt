@@ -98,6 +98,11 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(TurnstileFragment())
                     true
                 }
+                //TODO вставьте фрагмент с чатом
+                R.id.chat ->{
+                    //loadFragment()
+                    true
+                }
 
                 else -> false
             }

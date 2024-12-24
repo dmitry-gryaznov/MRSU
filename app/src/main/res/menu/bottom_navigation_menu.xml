@@ -21,5 +21,11 @@
         android:title="Турникет"
         />
 
+    <item
+        android:id="@+id/chat"
+        android:icon="@drawable/chat"
+        android:title="Общение"
+        />
+
 
 </menu>
