@@ -4,6 +4,12 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="ShapeAppearance.MaterialComponents.SmallComponent.Circular">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+
     <style name="BottomNavigationIconStyle" parent="Widget.MaterialComponents.BottomNavigationView">
         <!-- Цвет иконок для кнопок -->
         <item name="itemIconTint">@null</item>

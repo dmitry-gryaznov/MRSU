@@ -1,7 +1,19 @@
-package com.example.mrsu.dataclasses
+import com.example.mrsu.dataclasses.User
+import com.google.gson.annotations.SerializedName
 
 data class ChatMessage(
-    val sender: String,
-    val message: String,
-    val timestamp: Long
+    @SerializedName("Id")
+    val id: Int,
+
+    @SerializedName("User")
+    val user: User,
+
+    @SerializedName("IsTeacher")
+    val isTeacher: Boolean,
+
+    @SerializedName("CreateDate")
+    val createDate: String,
+
+    @SerializedName("Text")
+    val text: String?
 )

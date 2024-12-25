@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/teacher_message_color" />
+    <corners android:radius="8dp" />
+</shape>

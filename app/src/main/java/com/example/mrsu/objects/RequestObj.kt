@@ -1,5 +1,6 @@
 package com.example.mrsu.objects
 
+import ChatMessage
 import StudentRatingPlanResponse
 import StudentSemester
 import android.content.Context
@@ -217,8 +218,7 @@ object RequestObj {
                             onFailure("Ошибка парсинга ответа: ${e.message}")
                         }
                     }
-                }
-                else if (response.code == 500) {
+                } else if (response.code == 500) {
                 } else {
                     val errorMessage = when (response.code) {
                         401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
@@ -296,6 +296,50 @@ object RequestObj {
             }
         })
     }
+
+    fun getForumMessages(
+        context: Context,
+        disciplineId: Int,
+        onSuccess: (List<ChatMessage>) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val bearerToken = getAccessToken(context)
+
+        if (bearerToken.isNullOrEmpty()) {
+            onFailure("Токен не найден. Авторизуйтесь.")
+            return
+        }
+
+        val url = "https://papi.mrsu.ru/v1/ForumMessage?disciplineId=$disciplineId"
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Authorization", "Bearer $bearerToken")
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                onFailure("Ошибка сети: ${e.message}")
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    try {
+                        val messages =
+                            gson.fromJson(responseBody, Array<ChatMessage>::class.java).toList()
+                        onSuccess(messages)
+                    } catch (e: Exception) {
+                        onFailure("Ошибка обработки данных: ${e.message}")
+                    }
+                } else {
+                    onFailure("Ошибка сервера: ${response.code}")
+                }
+            }
+        })
+    }
+
 
 
     //SharedPreferences

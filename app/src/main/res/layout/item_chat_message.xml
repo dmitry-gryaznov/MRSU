@@ -1,26 +1,29 @@
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:layout_marginBottom="8dp">
 
-    <!-- Блок сообщения -->
+    <!-- Контейнер сообщения -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/messageContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/message_background"
         android:padding="12dp"
-        android:layout_gravity="start"
-        android:elevation="2dp">
+        android:elevation="2dp"
+        app:layout_constraintWidth_percent="0.75"
+        app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Аватарка внутри блока сообщения -->
+        <!-- Аватарка -->
         <ImageView
             android:id="@+id/avatarImageView"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/icons8___50"
             android:scaleType="centerCrop"
             android:layout_marginEnd="8dp"
             android:background="@drawable/circle_background" />
@@ -46,6 +49,16 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/message_text_color"
                 android:textSize="16sp" />
+
+            <!-- Дата сообщения -->
+            <TextView
+                android:id="@+id/messageDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                android:textStyle="italic" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

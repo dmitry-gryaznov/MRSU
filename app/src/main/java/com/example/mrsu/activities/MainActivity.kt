@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.mrsu.R
 import com.example.mrsu.databinding.ActivityMainBinding
+import com.example.mrsu.fragments.ChatDiscipFragment
 import com.example.mrsu.fragments.ChatFragment
 import com.example.mrsu.fragments.DisciplFragment
 import com.example.mrsu.fragments.HomeFragment
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.chat ->{
-                    loadFragment(ChatFragment())
+                    loadFragment(ChatDiscipFragment())
                     true
                 }
 
