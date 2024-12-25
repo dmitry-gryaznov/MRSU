@@ -14,7 +14,10 @@
     import java.text.SimpleDateFormat
     import java.util.Locale
 
-    class ChatAdapter(private val chatMessages: List<ChatMessage>) :
+    class ChatAdapter(
+        private val chatMessages: List<ChatMessage>,
+        private val onMessageLongClick: (ChatMessage) -> Unit
+    ) :
         RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
         class ChatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -72,6 +75,11 @@
                 .load(chatMessage.user.photo.urlSmall)
                 .circleCrop()
                 .into(holder.avatarImageView)
+
+            holder.itemView.setOnLongClickListener {
+                onMessageLongClick(chatMessage)
+                true
+            }
         }
 
 

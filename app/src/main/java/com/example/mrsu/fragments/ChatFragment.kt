@@ -35,12 +35,26 @@ class ChatFragment : Fragment() {
         messageInput = view.findViewById(R.id.messageInput)
         sendButton = view.findViewById(R.id.sendButton)
 
-        chatAdapter = ChatAdapter(chatMessages)
+        chatAdapter = ChatAdapter(chatMessages) { message ->
+            if (message.user.id == RequestObj.getUser(requireContext())?.id) {
+                showDeleteMessageDialog(message)
+            } else {
+                Toast.makeText(requireContext(), "Вы можете удалять только свои сообщения", Toast.LENGTH_SHORT).show()
+            }
+        }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = chatAdapter
 
         sendButton.setOnClickListener {
-
+            val messageText = messageInput.text.toString().trim()
+            if (messageText.isNotEmpty()) {
+                val disciplineId = arguments?.getInt("id")
+                if (disciplineId != null) {
+                    sendMessage(disciplineId, messageText)
+                } else {
+                    Toast.makeText(requireContext(), "ID дисциплины не найден", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         return view
@@ -74,6 +88,73 @@ class ChatFragment : Fragment() {
             )
         }
 
+    }
+
+    private fun loadMessages(disciplineId: Int) {
+        RequestObj.getForumMessages(
+            context = requireContext(),
+            disciplineId = disciplineId,
+            onSuccess = { messages: List<ChatMessage> ->
+                activity?.runOnUiThread {
+                    displayMessages(messages)
+                }
+            },
+            onFailure = { error ->
+                activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
+    private fun sendMessage(disciplineId: Int, messageText: String) {
+        RequestObj.sendForumMessage(
+            context = requireContext(),
+            disciplineId = disciplineId,
+            messageText = messageText,
+            onSuccess = {
+                activity?.runOnUiThread {
+                    messageInput.text?.clear()
+                    loadMessages(disciplineId)
+                }
+            },
+            onFailure = { error ->
+                activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
+    private fun showDeleteMessageDialog(message: ChatMessage) {
+        val alertDialog = android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Удалить сообщение")
+            .setMessage("Вы уверены, что хотите удалить это сообщение?")
+            .setPositiveButton("Удалить") { _, _ ->
+                deleteMessage(message)
+            }
+            .setNegativeButton("Отмена", null)
+            .create()
+        alertDialog.show()
+    }
+
+    private fun deleteMessage(message: ChatMessage) {
+        RequestObj.deleteForumMessage(
+            context = requireContext(),
+            messageId = message.id,
+            onSuccess = {
+                activity?.runOnUiThread {
+                    chatMessages.remove(message)
+                    chatAdapter.notifyDataSetChanged()
+                    Toast.makeText(requireContext(), "Сообщение удалено", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onFailure = { error ->
+                activity?.runOnUiThread {
+                    Toast.makeText(requireContext(), "Ошибка удаления: $error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
     }
 
     private fun displayMessages(messages: List<ChatMessage>) {
