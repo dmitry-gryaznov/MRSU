@@ -14,6 +14,7 @@
         android:layout_gravity="start"
         android:elevation="2dp">
 
+
         <TextView
             android:id="@+id/senderTextView"
             android:layout_width="wrap_content"

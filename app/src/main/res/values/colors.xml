@@ -16,4 +16,8 @@
     <color name="hint_color">#AAAAAA</color>
     <color name="text_color">#000000</color>
 
+    <color name="teacher_message_color">#FFE5E5</color> <!-- Пример: светло-розовый -->
+    <color name="student_message_color">#E5F7FF</color> <!-- Пример: светло-голубой -->
+
+
 </resources>

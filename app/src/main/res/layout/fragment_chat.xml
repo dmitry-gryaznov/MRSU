@@ -5,7 +5,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/chat_background">
+        android:background="@drawable/gradient_rectangle">
 
         <!-- Шапка -->
         <TextView
@@ -62,14 +62,15 @@
                 android:padding="8dp"
                 android:textColor="@color/text_color" />
 
-            <com.google.android.material.button.MaterialButton
+            <ImageButton
                 android:id="@+id/sendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/bottomNavigation"
-                android:paddingHorizontal="16dp"
-                android:text="Отправить"
-                android:textColor="@color/white" />
+                android:layout_width="49dp"
+                android:layout_height="41dp"
+                android:background="@drawable/input_background"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/send" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
