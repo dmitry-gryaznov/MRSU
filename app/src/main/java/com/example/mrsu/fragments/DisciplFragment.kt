@@ -1,5 +1,6 @@
 package com.example.mrsu.fragments
 
+import RecordBook
 import StudentSemester
 import android.os.Bundle
 import android.util.Log
@@ -131,4 +132,46 @@ class DisciplFragment : Fragment() {
             .addToBackStack(null) // Добавляем в back stack, чтобы можно было вернуться назад
             .commit()
     }
+
+//    private fun updateDisciplinesWithUnreadMarks(recordBooks: List<RecordBook>) {
+//        val container = binding.container
+//        val allDisciplines = recordBooks.flatMap { it.Disciplines }
+//
+//        allDisciplines.forEach { discipline ->
+//            RequestObj.getUnreadMarks(
+//                context = requireContext(),
+//                disciplineId = discipline.Id,
+//                onSuccess = { hasUnreadMarks ->
+//                    activity?.runOnUiThread {
+//                        // Находим элемент кнопки для этой дисциплины
+//                        val button = container.findViewById<Button>(discipline.Id)
+//                        if (button != null) {
+//                            val unreadIndicator = button.findViewById<View>(R.id.unreadIndicator)
+//                                ?: ImageView(requireContext()).apply {
+//                                    id = View.generateViewId()
+//                                    setImageResource(R.drawable.ic_unread_indicator) // Иконка восклицательного знака
+//                                    layoutParams = LinearLayout.LayoutParams(
+//                                        48, // Размер индикатора
+//                                        48
+//                                    ).apply {
+//                                        gravity = Gravity.CENTER_VERTICAL
+//                                        marginEnd = 16
+//                                    }
+//                                    (button.parent as LinearLayout).addView(this, 0)
+//                                }
+//                            unreadIndicator.visibility = if (hasUnreadMarks) View.VISIBLE else View.GONE
+//                        }
+//                    }
+//                },
+//                onFailure = { error ->
+//                    activity?.runOnUiThread {
+//                        Toast.makeText(requireContext(), "Ошибка обновления: $error", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            )
+//        }
+//    }
+
+
+
 }

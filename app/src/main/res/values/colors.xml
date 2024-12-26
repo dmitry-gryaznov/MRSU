@@ -19,5 +19,10 @@
     <color name="teacher_message_color">#FFE5E5</color> <!-- Пример: светло-розовый -->
     <color name="student_message_color">#E5F7FF</color> <!-- Пример: светло-голубой -->
 
+    <color name="grade_low">#FFCDD2</color> <!-- Красный для низких оценок -->
+    <color name="grade_medium">#FFF9C4</color> <!-- Жёлтый для средних -->
+    <color name="grade_high">#C8E6C9</color> <!-- Зелёный для высоких -->
+    <color name="grade_full">#AED581</color> <!-- Зелёный насыщенный для 100% -->
+
 
 </resources>
