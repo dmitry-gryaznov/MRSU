@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.mrsu.R
 import com.example.mrsu.adapter.ChatAdapter
 import com.example.mrsu.objects.RequestObj
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 
 class ChatFragment : Fragment() {
@@ -80,7 +81,8 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView?.animate()?.translationY(bottomNavigationView.height.toFloat())?.duration = 200
         // Получаем аргументы
         val disciplineId = arguments?.getInt("id")
         val disciplineName = arguments?.getString("name")
@@ -192,5 +194,11 @@ class ChatFragment : Fragment() {
         recyclerView.scrollToPosition(chatMessages.size - 1)
         chatAdapter.notifyDataSetChanged()
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
 
+        // Анимация возвращения BottomNavigationView
+        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView?.animate()?.translationY(0f)?.duration = 200
+    }
 }
