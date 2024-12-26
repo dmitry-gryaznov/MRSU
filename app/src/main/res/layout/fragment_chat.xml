@@ -39,13 +39,14 @@
 
         <!-- Панель ввода -->
         <LinearLayout
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="0dp"
             android:id="@+id/inputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/input_background"
             android:elevation="4dp"
-            android:padding="12dp"
+            android:layout_margin="8dp"
+            android:padding="10dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +67,7 @@
                 android:id="@+id/sendButton"
                 android:layout_width="49dp"
                 android:layout_height="41dp"
-                android:background="@drawable/input_background"
+                android:background="@drawable/ripple_effect"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/send" />
