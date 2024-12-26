@@ -11,14 +11,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.mrsu.R
 import com.example.mrsu.adapter.ChatAdapter
 import com.example.mrsu.objects.RequestObj
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
 class ChatFragment : Fragment() {
 
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var messageInput: TextInputEditText
@@ -30,6 +31,7 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
         recyclerView = view.findViewById(R.id.chatRecyclerView)
         messageInput = view.findViewById(R.id.messageInput)
@@ -39,7 +41,11 @@ class ChatFragment : Fragment() {
             if (message.user.id == RequestObj.getUser(requireContext())?.id) {
                 showDeleteMessageDialog(message)
             } else {
-                Toast.makeText(requireContext(), "Вы можете удалять только свои сообщения", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Вы можете удалять только свои сообщения",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -52,11 +58,23 @@ class ChatFragment : Fragment() {
                 if (disciplineId != null) {
                     sendMessage(disciplineId, messageText)
                 } else {
-                    Toast.makeText(requireContext(), "ID дисциплины не найден", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "ID дисциплины не найден", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
-
+        swipeRefreshLayout.setOnRefreshListener {
+            val disciplineId = arguments?.getInt("id")
+            if (disciplineId != null) {
+                loadMessages(disciplineId) {
+                    swipeRefreshLayout.isRefreshing = false // Останавливаем индикатор
+                }
+            } else {
+                swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(requireContext(), "ID дисциплины не найден", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
         return view
     }
 
@@ -90,18 +108,20 @@ class ChatFragment : Fragment() {
 
     }
 
-    private fun loadMessages(disciplineId: Int) {
+    private fun loadMessages(disciplineId: Int, onComplete: (() -> Unit)? = null) {
         RequestObj.getForumMessages(
             context = requireContext(),
             disciplineId = disciplineId,
             onSuccess = { messages: List<ChatMessage> ->
                 activity?.runOnUiThread {
                     displayMessages(messages)
+                    onComplete?.invoke()
                 }
             },
             onFailure = { error ->
                 activity?.runOnUiThread {
                     Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                    onComplete?.invoke()
                 }
             }
         )
@@ -151,7 +171,8 @@ class ChatFragment : Fragment() {
             },
             onFailure = { error ->
                 activity?.runOnUiThread {
-                    Toast.makeText(requireContext(), "Ошибка удаления: $error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Ошибка удаления: $error", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         )
@@ -167,7 +188,8 @@ class ChatFragment : Fragment() {
                 createDate = message.createDate,
                 text = message.text
             )
-        })
+        }.reversed())
+        recyclerView.scrollToPosition(chatMessages.size - 1)
         chatAdapter.notifyDataSetChanged()
     }
 
