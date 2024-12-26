@@ -8,6 +8,7 @@
 
     <!-- Контейнер сообщения -->
     <LinearLayout
+        android:layout_marginStart="10dp"
         android:id="@+id/messageContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
