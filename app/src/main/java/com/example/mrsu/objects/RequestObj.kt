@@ -10,8 +10,10 @@ import com.example.mrsu.dataclasses.AccessTokenMessage
 import com.example.mrsu.dataclasses.User
 import com.google.gson.Gson
 import okhttp3.FormBody
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -335,6 +337,109 @@ object RequestObj {
                     }
                 } else {
                     onFailure("Ошибка сервера: ${response.code}")
+                }
+            }
+        })
+    }
+
+
+    fun sendForumMessage(
+        context: Context,
+        disciplineId: Int,
+        messageText: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        Log.i("sendForumMessage", "Started")
+
+        val bearerToken = getAccessToken(context)
+
+        if (bearerToken.isNullOrEmpty()) {
+            onFailure("Токен не найден. Пожалуйста, авторизуйтесь.")
+            return
+        }
+
+        val url = "https://papi.mrsu.ru/v1/ForumMessage?disciplineId=$disciplineId"
+        val jsonBody = """
+        {
+            "Text": "$messageText"
+        }
+    """.trimIndent()
+
+        val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .addHeader("Authorization", "Bearer $bearerToken")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                Log.e("sendForumMessage", "Network error: ${e.message}")
+                (context as? AppCompatActivity)?.runOnUiThread {
+                    onFailure("Ошибка сети: ${e.message}")
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+                if (response.isSuccessful) {
+                    Log.i("sendForumMessage", "Message sent successfully")
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onSuccess()
+                    }
+                } else {
+                    val errorMessage = when (response.code) {
+                        400 -> "Ошибка запроса. Проверьте введённые данные."
+                        401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
+                        else -> "Ошибка сервера: ${response.code}"
+                    }
+                    Log.e("sendForumMessage", "Server error: $errorMessage")
+                    (context as? AppCompatActivity)?.runOnUiThread {
+                        onFailure(errorMessage)
+                    }
+                }
+            }
+        })
+    }
+
+    fun deleteForumMessage(
+        context: Context,
+        messageId: Int,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val bearerToken = getAccessToken(context)
+
+        if (bearerToken.isNullOrEmpty()) {
+            onFailure("Токен не найден. Пожалуйста, авторизуйтесь.")
+            return
+        }
+
+        val url = "https://papi.mrsu.ru/v1/ForumMessage/$messageId"
+        val request = Request.Builder()
+            .url(url)
+            .delete()
+            .addHeader("Authorization", "Bearer $bearerToken")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                onFailure("Ошибка сети: ${e.message}")
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    val errorMessage = when (response.code) {
+                        401 -> "Токен недействителен. Пожалуйста, авторизуйтесь снова."
+                        404 -> "Сообщение не найдено."
+                        else -> "Ошибка сервера: ${response.code}"
+                    }
+                    onFailure(errorMessage)
                 }
             }
         })
